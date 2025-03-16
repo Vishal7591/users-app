@@ -33,6 +33,8 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## API URL - http://localhost:4000
+
 ## Run tests
 
 ```bash
