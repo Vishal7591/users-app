@@ -18,7 +18,7 @@ export class Document {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 300, nullable: true })
   content: string;
 
   @CreateDateColumn()

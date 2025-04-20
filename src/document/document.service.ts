@@ -47,4 +47,28 @@ export class DocumentService {
   async getDocumentsForUser(userId: number): Promise<Document[]> {
     return this.documentRepository.find({ where: { user: { id: userId } } });
   }
+
+  async create(
+    userId: number,
+    createDocumentDto: DocumentDTO,
+    file: File,
+  ): Promise<any> {
+    console.log('--------');
+    console.log(userId);
+    console.log(file);
+    console.log(createDocumentDto);
+    try {
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+      if (!user) throw new NotFoundException('User not found');
+
+      const doc = new Document();
+      doc.user = user;
+      doc.title = createDocumentDto.title;
+      doc.content = file ? file.name : '';
+
+      return await this.documentRepository.save(doc);
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  }
 }

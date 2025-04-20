@@ -5,9 +5,14 @@ import {
   Param,
   Body,
   NotFoundException,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
 import { DocumentService } from './document.service';
 import { DocumentDTO } from './dto/document.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users/:userId/documents')
 export class DocumentController {
@@ -37,5 +42,28 @@ export class DocumentController {
     if (!docs.length)
       throw new NotFoundException('No documents found for this user');
     return docs;
+  }
+
+  @Post()
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return cb(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  create(
+    @Body() id: number,
+    docDto: DocumentDTO,
+    @UploadedFile() file: File,
+  ): Promise<any> {
+    return this.documentService.create(id, docDto, file);
   }
 }
