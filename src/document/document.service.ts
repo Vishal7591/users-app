@@ -53,10 +53,6 @@ export class DocumentService {
     createDocumentDto: DocumentDTO,
     file: File,
   ): Promise<any> {
-    console.log('--------');
-    console.log(userId);
-    console.log(file);
-    console.log(createDocumentDto);
     try {
       const user = await this.userRepository.findOne({ where: { id: userId } });
       if (!user) throw new NotFoundException('User not found');
